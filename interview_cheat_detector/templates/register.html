@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Register — ProctorQuiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#07090d;--bg2:#0d1018;--bg3:#121720;--border:#1a2030;--border2:#232c3a;
+      --text:#c8d4e8;--text2:#6b7a94;--text3:#2e3a4a;
+      --green:#00e5a0;--green-dim:#00e5a015;--red:#ff3b5c;--red-dim:#ff3b5c20;
+      --font-mono:'Space Mono',monospace;--font-sans:'Syne',sans-serif;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:var(--font-mono);background:var(--bg);color:var(--text);min-height:100vh;
+      display:flex;align-items:center;justify-content:center;padding:20px;}
+    body::before{content:'';position:fixed;inset:0;z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:48px 48px;opacity:.3;}
+    .card{position:relative;z-index:5;background:var(--bg2);border:1px solid var(--border2);
+      border-radius:12px;width:100%;max-width:520px;overflow:hidden;}
+    .card-header{padding:32px 36px 24px;border-bottom:1px solid var(--border);
+      background:linear-gradient(135deg,var(--green-dim),transparent);}
+    .back-link{font-size:11px;color:var(--text2);text-decoration:none;letter-spacing:.1em;
+      display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;transition:color .2s;}
+    .back-link:hover{color:var(--green);}
+    .card-title{font-family:var(--font-sans);font-size:26px;font-weight:800;margin-bottom:6px;}
+    .card-sub{font-size:12px;color:var(--text2);}
+    .card-body{padding:32px 36px;}
+    .form-group{margin-bottom:20px;}
+    label{display:block;font-size:10px;letter-spacing:.15em;color:var(--text2);margin-bottom:8px;}
+    input,select{width:100%;background:var(--bg3);border:1px solid var(--border2);
+      border-radius:6px;padding:12px 14px;font-family:var(--font-mono);font-size:13px;
+      color:var(--text);outline:none;transition:border-color .2s;}
+    input:focus,select:focus{border-color:var(--green);}
+    input::placeholder{color:var(--text3);}
+    select option{background:var(--bg3);}
+    .subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+    .subject-opt{background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;
+      padding:14px 12px;text-align:center;cursor:pointer;transition:all .2s;user-select:none;}
+    .subject-opt:hover{border-color:var(--green);}
+    .subject-opt.selected{border-color:var(--green);background:var(--green-dim);}
+    .subject-opt .s-icon{font-size:22px;display:block;margin-bottom:6px;}
+    .subject-opt .s-name{font-size:11px;font-weight:700;letter-spacing:.05em;}
+    .subject-opt .s-dur{font-size:10px;color:var(--text2);margin-top:2px;}
+    input[name="subject"]{display:none;}
+    .submit-btn{width:100%;background:var(--green);color:#000;font-family:var(--font-sans);
+      font-weight:800;font-size:14px;padding:15px;border:none;border-radius:8px;
+      cursor:pointer;letter-spacing:.05em;transition:all .2s;margin-top:8px;}
+    .submit-btn:hover{background:#00c988;transform:translateY(-1px);box-shadow:0 6px 20px #00e5a030;}
+    .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .error-msg{background:var(--red-dim);border:1px solid var(--red);border-radius:6px;
+      padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:16px;display:none;}
+    .rules{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:20px;}
+    .rules-title{font-size:10px;letter-spacing:.15em;color:var(--text2);margin-bottom:8px;}
+    .rule{font-size:11px;color:var(--text2);display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;line-height:1.5;}
+    .rule:last-child{margin-bottom:0;}
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <a href="/" class="back-link">← Back to Home</a>
+    <div class="card-title">Register for Quiz</div>
+    <div class="card-sub">Fill in your details and select a subject to begin</div>
+  </div>
+  <div class="card-body">
+    <div class="error-msg" id="errMsg"></div>
+
+    <div class="rules">
+      <div class="rules-title">⚠️ PROCTORING RULES</div>
+      <div class="rule"><span>📷</span><span>Camera and microphone must remain on throughout the quiz</span></div>
+      <div class="rule"><span>👁️</span><span>Keep your face visible and centered in frame at all times</span></div>
+      <div class="rule"><span>📱</span><span>No mobile phones visible on screen — AI will detect them</span></div>
+      <div class="rule"><span>🔇</span><span>Take quiz in a quiet room — multiple voices are flagged</span></div>
+      <div class="rule"><span>🔒</span><span>Do not switch tabs, copy, or paste during the quiz</span></div>
+    </div>
+
+    <div class="form-group">
+      <label>FULL NAME</label>
+      <input type="text" id="nameInput" placeholder="e.g. Arjun Sharma" autocomplete="off"/>
+    </div>
+    <div class="form-group">
+      <label>EMAIL ADDRESS</label>
+      <input type="email" id="emailInput" placeholder="e.g. arjun@example.com" autocomplete="off"/>
+    </div>
+    <div class="form-group">
+      <label>SELECT SUBJECT</label>
+      <div class="subject-grid" id="subjectGrid">
+        <div class="subject-opt selected" data-val="python" onclick="selectSubject(this)">
+          <span class="s-icon">🐍</span>
+          <div class="s-name">Python</div>
+          <div class="s-dur">10 Q · 20 min</div>
+        </div>
+        <div class="subject-opt" data-val="webdev" onclick="selectSubject(this)">
+          <span class="s-icon">🌐</span>
+          <div class="s-name">Web Dev</div>
+          <div class="s-dur">10 Q · 20 min</div>
+        </div>
+        <div class="subject-opt" data-val="ai" onclick="selectSubject(this)">
+          <span class="s-icon">🤖</span>
+          <div class="s-name">AI / ML</div>
+          <div class="s-dur">10 Q · 25 min</div>
+        </div>
+        <div class="subject-opt" data-val="dbms" onclick="selectSubject(this)">
+          <span class="s-icon">🗄️</span>
+          <div class="s-name">DBMS</div>
+          <div class="s-dur">10 Q · 20 min</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="registerAndStart()">
+      START PROCTORED QUIZ →
+    </button>
+  </div>
+</div>
+
+<script>
+  let selectedSubject = 'python';
+
+  // Pre-select subject from URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  const subParam  = urlParams.get('subject');
+  if (subParam) {
+    document.querySelectorAll('.subject-opt').forEach(el => el.classList.remove('selected'));
+    const target = document.querySelector(`[data-val="${subParam}"]`);
+    if (target) { target.classList.add('selected'); selectedSubject = subParam; }
+  }
+
+  function selectSubject(el) {
+    document.querySelectorAll('.subject-opt').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedSubject = el.dataset.val;
+  }
+
+  async function registerAndStart() {
+    const name  = document.getElementById('nameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const errEl = document.getElementById('errMsg');
+    const btn   = document.getElementById('submitBtn');
+
+    if (!name)  { showErr('Please enter your full name.'); return; }
+    if (!email || !email.includes('@')) { showErr('Please enter a valid email address.'); return; }
+
+    btn.disabled    = true;
+    btn.textContent = 'Creating session…';
+    errEl.style.display = 'none';
+
+    try {
+      const res  = await fetch('/quiz/start', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ name, email, subject: selectedSubject })
+      });
+      const data = await res.json();
+      if (data.error) { showErr(data.error); btn.disabled=false; btn.textContent='START PROCTORED QUIZ →'; return; }
+      window.location.href = data.redirect;
+    } catch(e) {
+      showErr('Server error. Please try again.');
+      btn.disabled=false; btn.textContent='START PROCTORED QUIZ →';
+    }
+  }
+
+  function showErr(msg) {
+    const el = document.getElementById('errMsg');
+    el.textContent    = msg;
+    el.style.display  = 'block';
+  }
+
+  document.addEventListener('keydown', e => { if(e.key==='Enter') registerAndStart(); });
+</script>
+</body>
+</html>
